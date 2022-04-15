@@ -10,7 +10,7 @@ import {
   InputGroup,
   Modal,
   Row,
-  Spinner
+  Spinner,
 } from 'react-bootstrap';
 import { FaCalendar, FaEthereum, FaUsers } from 'react-icons/fa';
 
@@ -18,9 +18,9 @@ import Datetime from './Datetime';
 import { handleError, toWei } from '../utils';
 
 const etherUnits = {
-  ether: 'Ether',
+  ether: 'ETH',
   gwei: 'Gwei',
-  wei: 'Wei'
+  wei: 'Wei',
 };
 
 const initialEvent = () => ({
@@ -28,9 +28,9 @@ const initialEvent = () => ({
   startTime: 0,
   endTime: 0,
   price: 1,
-  unit: 'ether',
+  unit: 'ETH',
   isFree: false,
-  quota: 1
+  quota: 1,
 });
 
 const initialEventValidation = () => ({
@@ -41,7 +41,7 @@ const initialEventValidation = () => ({
   endTime: false,
   price: false,
   unit: false,
-  quota: false
+  quota: false,
 });
 
 class CreateEventForm extends Component {
@@ -49,7 +49,7 @@ class CreateEventForm extends Component {
     event: initialEvent(),
     isCreating: false,
     isCreated: false,
-    validation: initialEventValidation()
+    validation: initialEventValidation(),
   };
 
   formSubmitted = async () => {
@@ -62,13 +62,17 @@ class CreateEventForm extends Component {
         const { event, validation } = this.state;
 
         if (validation.result) {
-          await loketh.methods.createEvent(
-            event.name,
-            event.startTime,
-            event.endTime,
-            toWei(event.price, event.unit),
-            event.quota
-          ).send({ from: accounts[0] });
+          console.log(event);
+          await loketh.methods
+            .createEvent(
+              event.name,
+              event.startTime,
+              event.endTime,
+              toWei(event.price, event.unit),
+              event.quota,
+              'ETH'
+            )
+            .send({ from: accounts[0] });
 
           this.setState({ isCreating: true, isCreated: true });
         } else {
@@ -92,53 +96,60 @@ class CreateEventForm extends Component {
     const unit = Object.keys(etherUnits).includes(event.unit);
     const quota = !isNaN(parseInt(event.quota)) && event.quota > 0;
 
-    this.setState({
-      validation: {
-        validated: true,
-        result: (name && startTime && endTime && price && unit && quota),
-        name,
-        startTime,
-        endTime,
-        price,
-        unit,
-        quota
+    this.setState(
+      {
+        validation: {
+          validated: true,
+          result: name && startTime && endTime && price && unit && quota,
+          name,
+          startTime,
+          endTime,
+          price,
+          unit,
+          quota,
+        },
+      },
+      () => {
+        callback();
       }
-    }, () => {
-      callback();
-    });
+    );
   };
 
   renderForm = () => {
     const { event, isCreating, isCreated, validation } = this.state;
 
     const { validated } = validation;
-    const startTimeValue = event.startTime > 0
-      ? moment.unix(event.startTime)
-      : '';
-    const endTimeValue = event.endTime > 0
-      ? moment.unix(event.endTime)
-      : '';
+    const startTimeValue =
+      event.startTime > 0 ? moment.unix(event.startTime) : '';
+    const endTimeValue = event.endTime > 0 ? moment.unix(event.endTime) : '';
 
     let submitButtonChildren = null;
 
     if (isCreating) {
-      submitButtonChildren = isCreated
-        ? 'You just created a new event!'
-        : (<Spinner animation="border" />);
+      submitButtonChildren = isCreated ? (
+        'You just created a new event!'
+      ) : (
+        <Spinner animation="border" />
+      );
     } else {
       submitButtonChildren = 'Create';
     }
 
     return (
-      <Form noValidate onSubmit={e => {
-        e.preventDefault();
+      <Form
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
 
-        this.formSubmitted();
-      }}>
+          this.formSubmitted();
+        }}
+      >
         <Form.Group>
           <InputGroup>
             <InputGroup.Prepend>
-              <InputGroup.Text><FaCalendar /></InputGroup.Text>
+              <InputGroup.Text>
+                <FaCalendar />
+              </InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
               required
@@ -146,10 +157,10 @@ class CreateEventForm extends Component {
               value={event.name}
               className={classNames({
                 'is-valid': validated && validation.name,
-                'is-invalid': validated && !validation.name
+                'is-invalid': validated && !validation.name,
               })}
               disabled={isCreating}
-              onChange={e => {
+              onChange={(e) => {
                 const { value: name } = e.target;
 
                 this.setState({ event: { ...event, name } }, () => {
@@ -157,13 +168,11 @@ class CreateEventForm extends Component {
                 });
               }}
             />
-            {
-              (validated && !validation.name) && (
-                <Form.Control.Feedback type="invalid">
-                  Name is required.
-                </Form.Control.Feedback>
-              )
-            }
+            {validated && !validation.name && (
+              <Form.Control.Feedback type="invalid">
+                Name is required.
+              </Form.Control.Feedback>
+            )}
           </InputGroup>
         </Form.Group>
         <Form.Group>
@@ -172,29 +181,33 @@ class CreateEventForm extends Component {
             inputProps={{
               className: classNames({
                 'is-valid': validated && validation.startTime,
-                'is-invalid': validated && !validation.startTime
+                'is-invalid': validated && !validation.startTime,
               }),
-              disabled: isCreating
+              disabled: isCreating,
             }}
             placeholder="Start date and time"
             value={startTimeValue}
-            isValidDate={currentDate => {
+            isValidDate={(currentDate) => {
               return currentDate.isSameOrAfter(moment(), 'day');
             }}
-            onChange={e => {
-              this.setState({
-                event: {
-                  ...event,
-                  startTime: e.unix()
+            onChange={(e) => {
+              this.setState(
+                {
+                  event: {
+                    ...event,
+                    startTime: e.unix(),
+                  },
+                },
+                () => {
+                  this.validate();
                 }
-              }, () => {
-                this.validate();
-              });
+              );
             }}
             validationMessage={() => {
-              return (validated && !validation.startTime) ? (
+              return validated && !validation.startTime ? (
                 <Form.Control.Feedback type="invalid">
-                  Start date and time is required and must be a date and time after now.
+                  Start date and time is required and must be a date and time
+                  after now.
                 </Form.Control.Feedback>
               ) : null;
             }}
@@ -206,29 +219,33 @@ class CreateEventForm extends Component {
             inputProps={{
               className: classNames({
                 'is-valid': validated && validation.endTime,
-                'is-invalid': validated && !validation.endTime
+                'is-invalid': validated && !validation.endTime,
               }),
-              disabled: isCreating
+              disabled: isCreating,
             }}
             placeholder="End date and time"
             value={endTimeValue}
-            isValidDate={currentDate => {
+            isValidDate={(currentDate) => {
               return currentDate.isSameOrAfter(startTimeValue, 'day');
             }}
-            onChange={e => {
-              this.setState({
-                event: {
-                  ...event,
-                  endTime: e.unix()
+            onChange={(e) => {
+              this.setState(
+                {
+                  event: {
+                    ...event,
+                    endTime: e.unix(),
+                  },
+                },
+                () => {
+                  this.validate();
                 }
-              }, () => {
-                this.validate();
-              });
+              );
             }}
             validationMessage={() => {
-              return (validated && !validation.endTime) ? (
+              return validated && !validation.endTime ? (
                 <Form.Control.Feedback type="invalid">
-                  End date and time is required and must be a date and time after start date and time.
+                  End date and time is required and must be a date and time
+                  after start date and time.
                 </Form.Control.Feedback>
               ) : null;
             }}
@@ -237,7 +254,9 @@ class CreateEventForm extends Component {
         <Form.Group as={Row} className="align-items-center">
           <InputGroup as={Col} sm="9">
             <InputGroup.Prepend>
-              <InputGroup.Text><FaEthereum /></InputGroup.Text>
+              <InputGroup.Text>
+                <FaEthereum />
+              </InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
               required
@@ -248,9 +267,9 @@ class CreateEventForm extends Component {
               value={event.price}
               className={classNames({
                 'is-valid': validated && validation.price,
-                'is-invalid': validated && !validation.price
+                'is-invalid': validated && !validation.price,
               })}
-              onChange={e => {
+              onChange={(e) => {
                 const { value: price } = e.target;
 
                 this.setState({ event: { ...event, price } }, () => {
@@ -270,7 +289,7 @@ class CreateEventForm extends Component {
                   key={i}
                   eventKey={unit}
                   active={event.unit === unit}
-                  onSelect={unit => {
+                  onSelect={(unit) => {
                     this.setState({ event: { ...event, unit } });
                   }}
                 >
@@ -278,13 +297,11 @@ class CreateEventForm extends Component {
                 </Dropdown.Item>
               ))}
             </DropdownButton>
-            {
-              (validated && !validation.price) && (
-                <Form.Control.Feedback type="invalid">
-                  Price is required and must be at least zero (free).
-                </Form.Control.Feedback>
-              )
-            }
+            {validated && !validation.price && (
+              <Form.Control.Feedback type="invalid">
+                Price is required and must be at least zero (free).
+              </Form.Control.Feedback>
+            )}
           </InputGroup>
           <Col sm="3">
             <Form.Check
@@ -294,21 +311,24 @@ class CreateEventForm extends Component {
               label="Free"
               checked={event.isFree}
               disabled={isCreating}
-              onChange={e => {
+              onChange={(e) => {
                 const { checked: isFree } = e.target;
-                const price = isFree ? 0 : (event.price || 0);
+                const price = isFree ? 0 : event.price || 0;
                 const unit = isFree ? 'ether' : event.unit;
 
-                this.setState({
-                  event: {
-                    ...event,
-                    isFree,
-                    price,
-                    unit
+                this.setState(
+                  {
+                    event: {
+                      ...event,
+                      isFree,
+                      price,
+                      unit,
+                    },
+                  },
+                  () => {
+                    this.validate();
                   }
-                }, () => {
-                  this.validate();
-                });
+                );
               }}
             />
           </Col>
@@ -316,7 +336,9 @@ class CreateEventForm extends Component {
         <Form.Group>
           <InputGroup>
             <InputGroup.Prepend>
-              <InputGroup.Text><FaUsers /></InputGroup.Text>
+              <InputGroup.Text>
+                <FaUsers />
+              </InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
               required
@@ -326,10 +348,10 @@ class CreateEventForm extends Component {
               value={event.quota}
               className={classNames({
                 'is-valid': validated && validation.quota,
-                'is-invalid': validated && !validation.quota
+                'is-invalid': validated && !validation.quota,
               })}
               disabled={isCreating}
-              onChange={e => {
+              onChange={(e) => {
                 const { value: quota } = e.target;
 
                 this.setState({ event: { ...event, quota } }, () => {
@@ -337,21 +359,14 @@ class CreateEventForm extends Component {
                 });
               }}
             />
-            {
-              (validated && !validation.quota) && (
-                <Form.Control.Feedback type="invalid">
-                  Quota is required and must be at least one.
-                </Form.Control.Feedback>
-              )
-            }
+            {validated && !validation.quota && (
+              <Form.Control.Feedback type="invalid">
+                Quota is required and must be at least one.
+              </Form.Control.Feedback>
+            )}
           </InputGroup>
         </Form.Group>
-        <Button
-          variant="primary"
-          type="submit"
-          block
-          disabled={isCreating}
-        >
+        <Button variant="primary" type="submit" block disabled={isCreating}>
           {submitButtonChildren}
         </Button>
       </Form>
@@ -359,10 +374,7 @@ class CreateEventForm extends Component {
   };
 
   render() {
-    const {
-      onHide = () => {},
-      show
-    } = this.props;
+    const { onHide = () => {}, show } = this.props;
 
     const { isCreating, isCreated } = this.state;
 
@@ -370,14 +382,17 @@ class CreateEventForm extends Component {
       <Modal
         show={show}
         onHide={() => {
-          this.setState({
-            event: initialEvent(),
-            isCreating: false,
-            isCreated: false,
-            validation: initialEventValidation()
-          }, () => {
-            onHide();
-          });
+          this.setState(
+            {
+              event: initialEvent(),
+              isCreating: false,
+              isCreated: false,
+              validation: initialEventValidation(),
+            },
+            () => {
+              onHide();
+            }
+          );
         }}
         backdrop="static"
         keyboard={false}
@@ -386,9 +401,7 @@ class CreateEventForm extends Component {
         <Modal.Header closeButton={!isCreating || isCreated}>
           <Modal.Title>Create a new event</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {this.renderForm()}
-        </Modal.Body>
+        <Modal.Body>{this.renderForm()}</Modal.Body>
       </Modal>
     );
   }

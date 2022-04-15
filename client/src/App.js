@@ -11,18 +11,19 @@ import { Events, MyEvents, MyTickets } from './pages';
 import { handleError } from './utils';
 
 import './App.css';
+import { Box, Flex } from '@chakra-ui/react';
 
 class App extends Component {
   state = {
     accounts: [],
     initialized: false,
     loketh: null,
-    web3: null
+    web3: null,
   };
 
   componentDidMount = async () => {
     try {
-      const web3 = await getWeb3(accounts => {
+      const web3 = await getWeb3((accounts) => {
         this.setState({ accounts });
       });
 
@@ -42,7 +43,7 @@ class App extends Component {
 
       const instance = new web3.eth.Contract(
         LokethContract.abi,
-        deployedNetwork.address,
+        deployedNetwork.address
       );
 
       this.setState({ accounts, initialized: true, loketh: instance, web3 });
@@ -57,44 +58,43 @@ class App extends Component {
 
     return (
       <Router>
-        <Navbar
-          accounts={accounts}
-          initialized={initialized}
-          loketh={loketh}
-          web3={web3}
-        />
-        <Container as="main">
-          <LokethAlert />
-          <Switch>
-            <Route path="/my-events">
-              <MyEvents
-                accounts={accounts}
-                initialized={initialized}
-                loketh={loketh}
-                web3={web3}
-              />
-            </Route>
-            <Route path="/my-tickets">
-              <MyTickets
-                accounts={accounts}
-                initialized={initialized}
-                loketh={loketh}
-                web3={web3}
-              />
-            </Route>
-            <Route path="/">
-              <Events
-                accounts={accounts}
-                initialized={initialized}
-                loketh={loketh}
-                web3={web3}
-              />
-            </Route>
-          </Switch>
-        </Container>
-        <Container>
-          <Footer />
-        </Container>
+        <Flex flexDir={'row'} gap="20px" width={'100vw'} height="100vh">
+          <Navbar
+            accounts={accounts}
+            initialized={initialized}
+            loketh={loketh}
+            web3={web3}
+          />
+          <Container as="main">
+            <LokethAlert />
+            <Switch>
+              <Route path="/my-events">
+                <MyEvents
+                  accounts={accounts}
+                  initialized={initialized}
+                  loketh={loketh}
+                  web3={web3}
+                />
+              </Route>
+              <Route path="/my-tickets">
+                <MyTickets
+                  accounts={accounts}
+                  initialized={initialized}
+                  loketh={loketh}
+                  web3={web3}
+                />
+              </Route>
+              <Route path="/">
+                <Events
+                  accounts={accounts}
+                  initialized={initialized}
+                  loketh={loketh}
+                  web3={web3}
+                />
+              </Route>
+            </Switch>
+          </Container>
+        </Flex>
       </Router>
     );
   }

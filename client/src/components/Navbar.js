@@ -1,8 +1,32 @@
+import { Flex, Image, Text } from '@chakra-ui/react';
 import React, { Component } from 'react';
 import { Container, Nav, Navbar as RBNavbar, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
+import { MdEventSeat, MdEvent } from 'react-icons/md';
+import { ImTicket } from 'react-icons/im';
+import { TiGroup } from 'react-icons/ti';
 import { fromWei, getShortAddress, handleError } from '../utils';
+
+const Tabs = [
+  {
+    id: Math.random(),
+    icon: <MdEvent />,
+    title: 'Events',
+    link: '/',
+  },
+  {
+    id: Math.random(),
+    icon: <MdEventSeat />,
+    title: 'My Events',
+    link: '/my-events',
+  },
+  {
+    id: Math.random(),
+    icon: <ImTicket />,
+    title: 'My Tickets',
+    link: '/my-tickets',
+  },
+];
 
 class Navbar extends Component {
   eventCreatedListener = null;
@@ -53,7 +77,7 @@ class Navbar extends Component {
       this.setState({
         account: getShortAddress(account),
         balance: fromWei(balance),
-        loaded: true
+        loaded: true,
       });
     } catch (error) {
       handleError(error);
@@ -122,35 +146,77 @@ class Navbar extends Component {
   render() {
     const { account, balance, loaded } = this.state;
 
+    const Tab = ({ item }) => {
+      return (
+        <Link to={item.link} style={{ textDecoration: 'none' }}>
+          <Flex
+            width={'100%'}
+            color="#667085"
+            fontWeight={'600'}
+            fontSize="14px"
+            alignItems={'center'}
+            padding="10px 12px"
+            borderRadius={'4px'}
+            _hover={{ backgroundColor: '#273E66', color: '#fff' }}
+            cursor="pointer"
+            gap="20px"
+          >
+            {item.icon}
+            <Text>{item.title}</Text>
+          </Flex>
+        </Link>
+      );
+    };
+
     return (
-      <RBNavbar bg="dark" expand="md" sticky="top" variant="dark">
-        <Container>
-          <RBNavbar.Brand>Lok<strong>eth</strong></RBNavbar.Brand>
-          <RBNavbar.Toggle />
-          <RBNavbar.Collapse>
-            <Nav className="mr-auto" defaultActiveKey="events">
-              <Nav.Link to="/" as={Link} eventKey="events">
-                Events
-              </Nav.Link>
-              <Nav.Link to="/my-events" as={Link} eventKey="my-events">
-                My Events
-              </Nav.Link>
-              <Nav.Link to="/my-tickets" as={Link} eventKey="my-tickets">
-                My Tickets
-              </Nav.Link>
-            </Nav>
-            {
-              loaded ? (
-                <RBNavbar.Text>
-                  Signed in as: <strong>{account} ({balance} ETH)</strong>
-                </RBNavbar.Text>
-              ) : (
-                <Spinner animation="grow" variant="light" />
-              )
-            }
-          </RBNavbar.Collapse>
-        </Container>
-      </RBNavbar>
+      <>
+        <Flex
+          flexDir={'column'}
+          padding="20px"
+          gap={'20px'}
+          backgroundColor="#fff"
+          width={'300px'}
+          marginRight="20px"
+          paddingTop={'200px'}
+          pos="relative"
+          borderRight={'2px solid #F6F9FF'}
+        >
+          <Flex alignItems="center" gap={'10px'}>
+            <TiGroup color="#3762DD" fontSize={'25px'} />
+            <Flex flexDir={'column'}>
+              <Text fontSize={'25px'} color="#273E66" fontWeight={'600'}>
+                Eventall
+              </Text>
+              <Text fontSize={'12px'} color="#273E66">
+                All about your event
+              </Text>
+            </Flex>
+          </Flex>
+          {Tabs.map((item) => (
+            <Tab item={item} key={item.id} />
+          ))}
+
+          <Flex
+            position={'absolute'}
+            left="10px"
+            right="10px"
+            bottom="50px"
+            bgColor={'#F6F9FF'}
+            borderRadius="4px"
+            flexDir={'column'}
+            padding="15px"
+            justifyContent={'center'}
+            minHeight={'100px'}
+          >
+            <Text fontSize={'20px'} color="#273E66" fontWeight={'600'}>
+              User Account:
+            </Text>
+            <Text fontSize={'12px'} color="#273E66">
+              {account} ({balance} ETH)
+            </Text>
+          </Flex>
+        </Flex>
+      </>
     );
   }
 }

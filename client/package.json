@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^1.8.8",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
     "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
+    "framer-motion": "^4.1.17",
     "moment": "^2.29.1",
     "react": "16.11.0",
     "react-bootstrap": "^1.4.0",
