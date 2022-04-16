@@ -4,6 +4,7 @@ import { Col, Row, Spinner } from 'react-bootstrap';
 
 import { Event, Pagination } from '../components';
 import { arrayChunk, descPagination, handleError, toEvent } from '../utils';
+import { Table, TableCaption, TableContainer, Tbody, Th, Thead, Tr, Td, Flex, Box } from '@chakra-ui/react';
 
 const CHUNK = 3;
 
@@ -17,7 +18,7 @@ class MyTickets extends Component {
     page: 1,
     paginationHasPrev: false,
     paginationHasNext: false,
-    perPage: 12,
+    perPage: 3,
     tickets: [],
     totalTickets: 0
   };
@@ -87,7 +88,7 @@ class MyTickets extends Component {
           loaded: true,
           paginationHasPrev,
           paginationHasNext,
-          tickets: arrayChunk(tickets, CHUNK)
+          tickets: tickets
         });
       });
     } catch (error) {
@@ -130,39 +131,66 @@ class MyTickets extends Component {
     const fromData = ((page - 1) * perPage) + 1;
     const toData = paginationHasNext ? page * perPage : totalTickets;
 
+    const TableRowComponent = (props) => {
+      console.log("e", props.event);
+      let event = props.event;
+      return (
+        <Tr>
+          <Td>{event.shortName}</Td>
+          <Td>{event.startTimeDisplay}</Td>
+          <Td>{event.endTimeDisplay}</Td>
+          <Td>{event.price}</Td>
+          <Td>{event.shortOrganizer}</Td>
+        </Tr>
+      )
+    }
+
     return (
       <Fragment>
-        <h1 className="mt-1">My Tickets</h1>
         {
           loaded ? (
-            tickets.length > 0 ? (tickets.map((chunk, i) => {
-              const filler = [];
+            tickets.length > 0 ? (
+              <>
+                <TableContainer>
+                  <Table variant='striped' colorScheme='blue' size="lg">
+                    <TableCaption placement="top" fontSize={"24px"}>Show all my tickets</TableCaption>
+                    <Thead>
+                      <Tr>
+                        <Th>Name</Th>
+                        <Th>Start</Th>
+                        <Th>End</Th>
+                        <Th>Price</Th>
+                        <Th>Organizer</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {tickets.map((item) => {
+                        return (
+                          <TableRowComponent event={item} />
+                        )
+                      })}
+                    </Tbody>
 
-              for (let x = 0; x < (CHUNK - chunk.length); x++) {
-                filler.push(<Col key={x} />);
-              }
+                  </Table>
+                </TableContainer>
+              </>
 
-              const rowClassName = classNames({ 'mt-4': i > 0 });
-
-              return (
-                <Row className={rowClassName} key={i}>
-                  {chunk.map((ticket, j) => (
-                    <Col key={j}>
-                      <Event event={ticket} forParticipant />
-                    </Col>
-                  ))}
-                  {filler}
-                </Row>
-              );
-            })) : (
+            ) : (
               <p className="text-center">
                 You have no tickets.
               </p>
             )
           ) : (
-            <div className="d-flex justify-content-center">
-              <Spinner animation="border" />
-            </div>
+            <Box justify="center" align="center" width={"100%"} height="100%">
+              <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+                style={{ margin: "290px" }}
+              />
+            </Box>
           )
         }
         {

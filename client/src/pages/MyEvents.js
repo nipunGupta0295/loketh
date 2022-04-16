@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
-import { Button, Col, Row, Spinner } from 'react-bootstrap';
-import { FaCalendarPlus } from 'react-icons/fa';
+import { MdCreate } from 'react-icons/md'
+import { Table, TableCaption, TableContainer, Tbody, Th, Thead, Tr, Td, Flex, Button, Box, Spinner } from '@chakra-ui/react';
 
 import {
   CreateEventForm,
@@ -25,7 +25,7 @@ class MyEvents extends Component {
     page: 1,
     paginationHasPrev: false,
     paginationHasNext: false,
-    perPage: 12,
+    perPage: 3,
     selectedEvent: null,
     showCreate: false,
     showWithdrawal: false,
@@ -96,7 +96,7 @@ class MyEvents extends Component {
         }
 
         this.setState({
-          events: arrayChunk(events, CHUNK),
+          events: events,
           loaded: true,
           paginationHasPrev,
           paginationHasNext
@@ -127,10 +127,8 @@ class MyEvents extends Component {
 
     const eventIds = [];
 
-    for (const chunks of events) {
-      for (const e of chunks) {
-        eventIds.push(e.id);
-      }
+    for (const e of events) {
+      eventIds.push(e.id);
     }
 
     const filter = { eventId: eventIds };
@@ -138,6 +136,8 @@ class MyEvents extends Component {
     this.moneyWithdrawnListener = loketh.events.TicketIssued({ filter });
     this.moneyWithdrawnListener.on(event, callback);
   };
+
+
 
   render() {
     const { accounts, loketh } = this.props;
@@ -158,63 +158,97 @@ class MyEvents extends Component {
     const fromData = ((page - 1) * perPage) + 1;
     const toData = paginationHasNext ? page * perPage : totalEvents;
 
+    const TableRowComponent = (props) => {
+      console.log("e", props.event);
+      let event = props.event;
+      return (
+        <Tr>
+          <Td
+            onClick={() => {
+              this.setState({
+                selectedEvent: event,
+                showWithdrawal: true
+              });
+            }}
+            style={{ cursor: "pointer" }}
+          >{event.shortName}</Td>
+          <Td>{event.startTimeDisplay}</Td>
+          <Td>{event.endTimeDisplay}</Td>
+          <Td>{event.price}</Td>
+          <Td> {`${event.soldCounter} / ${event.quota}`}</Td>
+        </Tr>
+      )
+    }
+
     return (
       <Fragment>
-        <div className="mt-1 position-relative">
-          <h1>My Events</h1>
+        {loaded ? <Flex className="mt-1 position-relative">
           <div
-            className="position-absolute"
-            style={{ top: '0px', right: '0px' }}
           >
             <Button
-              variant="primary"
               onClick={() => {
                 this.setState({ showCreate: true });
               }}
+              leftIcon={<MdCreate />}
+              colorScheme='blue' variant='outline'
             >
-              <IconWithText icon={FaCalendarPlus}>Create</IconWithText>
+              Create
             </Button>
           </div>
-        </div>
+        </Flex> : null}
         {
           loaded ? (
-            events.length > 0 ? (events.map((chunk, i) => {
-              const filler = [];
+            events.length > 0 ? (
+              <>
+                <TableContainer>
+                  <Table variant='striped' colorScheme='blue' size="lg">
+                    <TableCaption placement="top" fontSize={"24px"}>Show my events</TableCaption>
+                    <Thead>
+                      <Tr>
+                        <Th>Name</Th>
+                        <Th>Start</Th>
+                        <Th>End</Th>
+                        <Th>Price</Th>
+                        <Th>Sold</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {this.state.events.map((item) => {
+                        return (
+                          <TableRowComponent event={item} />
+                        )
+                      })}
+                    </Tbody>
 
-              for (let x = 0; x < (CHUNK - chunk.length); x++) {
-                filler.push(<Col key={x} />);
-              }
+                  </Table>
+                </TableContainer>
+              </>
+            ) : (
+              <Box marginTop={"230"} marginLeft={"400"}
+                style={{
+                  
+                }}
+              >
+                <p className="text-center"
+                  style={{padding: 50, border: "1px blue"}}
+                >
+                  You have no events.
+                </p>
+              </Box>
 
-              const rowClassName = classNames({ 'mt-4': i > 0 });
-
-              return (
-                <Row className={rowClassName} key={i}>
-                  {chunk.map((event, j) => (
-                    <Col key={j}>
-                      <Event
-                        event={event}
-                        forOrganizer
-                        onClickTitle={() => {
-                          this.setState({
-                            selectedEvent: event,
-                            showWithdrawal: true
-                          });
-                        }}
-                      />
-                    </Col>
-                  ))}
-                  {filler}
-                </Row>
-              );
-            })) : (
-              <p className="text-center">
-                You have no events.
-              </p>
             )
           ) : (
-            <div className="d-flex justify-content-center">
-              <Spinner animation="border" />
-            </div>
+            <Box justify="center" align="center" width={"100%"} height="100%">
+              <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+                style={{ marginTop: "250px", marginLeft: "400px" }}
+              />
+            </Box>
+
           )
         }
         {

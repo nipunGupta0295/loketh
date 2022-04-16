@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Container } from 'react-bootstrap';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +10,7 @@ import { Events, MyEvents, MyTickets } from './pages';
 import { handleError } from './utils';
 
 import './App.css';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Container } from '@chakra-ui/react';
 
 class App extends Component {
   state = {
@@ -65,8 +64,7 @@ class App extends Component {
             loketh={loketh}
             web3={web3}
           />
-          <Container as="main">
-            <LokethAlert />
+          <Box pt={50}>
             <Switch>
               <Route path="/my-events">
                 <MyEvents
@@ -93,7 +91,7 @@ class App extends Component {
                 />
               </Route>
             </Switch>
-          </Container>
+          </Box>
         </Flex>
       </Router>
     );

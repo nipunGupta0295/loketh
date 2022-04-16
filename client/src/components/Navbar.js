@@ -148,21 +148,22 @@ class Navbar extends Component {
 
     const Tab = ({ item }) => {
       return (
-        <Link to={item.link} style={{ textDecoration: 'none' }}>
+        <Link to={item.link} style={{ textDecoration: 'none', width: "90%" }}>
           <Flex
             width={'100%'}
             color="#667085"
             fontWeight={'600'}
-            fontSize="14px"
+            fontSize="18px"
             alignItems={'center'}
             padding="10px 12px"
             borderRadius={'4px'}
             _hover={{ backgroundColor: '#273E66', color: '#fff' }}
             cursor="pointer"
             gap="20px"
+            justifyContent={"center"}
           >
             {item.icon}
-            <Text>{item.title}</Text>
+            <Text style={{ width: "100%" }}>{item.title}</Text>
           </Flex>
         </Link>
       );
@@ -177,41 +178,49 @@ class Navbar extends Component {
           backgroundColor="#fff"
           width={'300px'}
           marginRight="20px"
-          paddingTop={'200px'}
+          paddingTop={'20px'}
           pos="relative"
           borderRight={'2px solid #F6F9FF'}
+          justify="space-between"
+          style={{backgroundImage: "linear-gradient(to top, #0f4af2, #d4ddf8)"}}
         >
-          <Flex alignItems="center" gap={'10px'}>
-            <TiGroup color="#3762DD" fontSize={'25px'} />
+          <Flex alignItems="center" gap={'10px'} flex="2" justifyContent={"center"}>
+            <TiGroup color="#3762DD" fontSize={'40px'} />
             <Flex flexDir={'column'}>
-              <Text fontSize={'25px'} color="#273E66" fontWeight={'600'}>
+              <Text fontSize={'30px'} color="#273E66" fontWeight={'600'} textAlign="center">
                 Eventall
               </Text>
-              <Text fontSize={'12px'} color="#273E66">
+              <Text fontSize={'18px'} color="#627fb1">
                 All about your event
               </Text>
             </Flex>
           </Flex>
-          {Tabs.map((item) => (
-            <Tab item={item} key={item.id} />
-          ))}
 
           <Flex
-            position={'absolute'}
-            left="10px"
-            right="10px"
-            bottom="50px"
+            flexDir="column"
+            justify="flex-start"
+            align={"center"}
+            flex="4"
+          >
+            {Tabs.map((item) => (
+              <Tab item={item} key={item.id} />
+            ))}
+          </Flex>
+
+
+          <Flex
             bgColor={'#F6F9FF'}
             borderRadius="4px"
             flexDir={'column'}
-            padding="15px"
+            padding="5px"
             justifyContent={'center'}
             minHeight={'100px'}
+            flex="2"
           >
-            <Text fontSize={'20px'} color="#273E66" fontWeight={'600'}>
+            <Text fontSize={'30px'} color="#273E66" fontWeight={'600'} textAlign="center">
               User Account:
             </Text>
-            <Text fontSize={'12px'} color="#273E66">
+            <Text fontSize={'14px'} color="#273E66" textAlign="center">
               {account} ({balance} ETH)
             </Text>
           </Flex>

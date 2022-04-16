@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import { Col, Row, Spinner } from 'react-bootstrap';
-
+import { FaTicketAlt } from 'react-icons/fa'
 import { BuyTicketForm, Event, Pagination } from '../components';
 import { arrayChunk, descPagination, handleError, toEvent } from '../utils';
+import { Table, TableCaption, TableContainer, Tbody, Th, Thead, Tr, Td, Flex, Box } from '@chakra-ui/react';
 
 const CHUNK = 3;
 
@@ -14,7 +15,7 @@ class Events extends Component {
     page: 1,
     paginationHasPrev: false,
     paginationHasNext: false,
-    perPage: 12,
+    perPage: 3,
     selectedEvent: null,
     showBuyTicket: false,
     totalEvents: 0
@@ -45,6 +46,8 @@ class Events extends Component {
         from: accounts[0]
       });
 
+
+
       this.setState({ page, totalEvents }, async () => {
         const { page, perPage, totalEvents } = this.state;
 
@@ -65,8 +68,10 @@ class Events extends Component {
           events.push(toEvent(event, i));
         }
 
+        console.log('totalEvent', events);
+
         this.setState({
-          events: arrayChunk(events, CHUNK),
+          events: events,
           loaded: true,
           paginationHasPrev,
           paginationHasNext
@@ -95,47 +100,83 @@ class Events extends Component {
     const fromData = ((page - 1) * perPage) + 1;
     const toData = paginationHasNext ? page * perPage : totalEvents;
 
+    const TableRowComponent = (props) => {
+      console.log("e", props.event);
+      let event = props.event;
+      return (
+        <Tr>
+          <Td>{event.shortName}</Td>
+          <Td>{event.startTimeDisplay}</Td>
+          <Td>{event.endTimeDisplay}</Td>
+          <Td>{event.price}</Td>
+          <Td>{event.shortOrganizer}</Td>
+          <Td
+            onClick={() => {
+              this.setState({
+                selectedEvent: event,
+                showBuyTicket: true
+              });
+            }}
+            style={{cursor: "pointer"}}
+          ><FaTicketAlt /></Td>
+        </Tr>
+      )
+    }
+
     return (
-      <Fragment>
-        <h1 className="mt-1">Events</h1>
+      <Flex align="center" justify="center" flexDir="column" flex="1">
         {
           loaded ? (
-            events.length > 0 ? (events.map((chunk, i) => {
-              const filler = [];
+            events.length > 0 ? (
+              <>
+                <TableContainer>
+                  <Table variant='striped' colorScheme='blue' size="lg">
+                    <TableCaption placement="top" fontSize={"24px"}>Show All the current events</TableCaption>
+                    <Thead>
+                      <Tr>
+                        <Th>Name</Th>
+                        <Th>Start</Th>
+                        <Th>End</Th>
+                        <Th>Price</Th>
+                        <Th>Organizer</Th>
+                        <Th>Buy</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {this.state.events.map((item) => {
+                        return (
+                          <TableRowComponent event={item} />
+                        )
+                      })}
+                    </Tbody>
 
-              for (let x = 0; x < (CHUNK - chunk.length); x++) {
-                filler.push(<Col key={x} />);
-              }
-
-              const rowClassName = classNames({ 'mt-4': i > 0 });
-
-              return (
-                <Row className={rowClassName} key={i}>
-                  {chunk.map((event, j) => (
-                    <Col key={j}>
-                      <Event
-                        event={event}
-                        onClickTitle={() => {
-                          this.setState({
-                            selectedEvent: event,
-                            showBuyTicket: true
-                          });
-                        }}
-                      />
-                    </Col>
-                  ))}
-                  {filler}
-                </Row>
-              );
-            })) : (
-              <p className="text-center">
-                There are no upcoming events at this time.
-              </p>
+                  </Table>
+                </TableContainer>
+              </>
+            ) : (
+              <Box marginTop={"230"} marginLeft={"400"}
+                style={{
+                  
+                }}
+              >
+                <p className="text-center"
+                  style={{padding: 50, border: "1px blue"}}
+                >
+                  You have no events.
+                </p>
+              </Box>
             )
           ) : (
-            <div className="d-flex justify-content-center">
-              <Spinner animation="border" />
-            </div>
+            <Box justify="center" align="center" width={"100%"} height="100%">
+              <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+                style={{ margin: "290px" }}
+              />
+            </Box>
           )
         }
         {
@@ -168,7 +209,7 @@ class Events extends Component {
             />
           )
         }
-      </Fragment>
+      </Flex>
     );
   }
 }
