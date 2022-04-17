@@ -1,3 +1,4 @@
+import { Heading } from '@chakra-ui/react';
 import React, { Component } from 'react';
 import { Button, Form, InputGroup, Modal, Spinner } from 'react-bootstrap';
 import {
@@ -97,7 +98,7 @@ class BuyTicketForm extends Component {
 
   render() {
     const {
-      onHide = () => {},
+      onHide = () => { },
       show = false
     } = this.props;
 
@@ -149,7 +150,7 @@ class BuyTicketForm extends Component {
         centered
       >
         <Modal.Header closeButton={!isBuying || isPaymentSucceed}>
-          <Modal.Title>Buy Ticket</Modal.Title>
+          <Heading style={{ margin: "0 auto", color: "#1c316f" }}>Buy Ticket</Heading>
         </Modal.Header>
         <Modal.Body>
           {
@@ -162,17 +163,18 @@ class BuyTicketForm extends Component {
                 <Form.Group>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text><FaCalendar /></InputGroup.Text>
+                      <InputGroup.Text><FaCalendar style={{color: "#1c316f"}} /></InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control value={event.name} readOnly />
+                    <Form.Control style={{backgroundColor: "#bee3f8"}} value={event.name} readOnly />
                   </InputGroup>
                 </Form.Group>
                 <Form.Group>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
+                      <InputGroup.Text>< FaCalendarAlt style={{color: "#1c316f"}} /></InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control
+                    style={{backgroundColor: "#bee3f8"}}
                       value={
                         `${event.startTimeDisplay} - ${event.endTimeDisplay}`
                       }
@@ -183,17 +185,17 @@ class BuyTicketForm extends Component {
                 <Form.Group>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text><FaUserCircle /></InputGroup.Text>
+                      <InputGroup.Text><FaUserCircle style={{color: "#1c316f"}}/></InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control value={event.organizer} readOnly />
+                    <Form.Control style={{backgroundColor: "#bee3f8"}} value={event.organizer} readOnly />
                   </InputGroup>
                 </Form.Group>
                 <Form.Group>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text><FaEthereum /></InputGroup.Text>
+                      <InputGroup.Text><FaEthereum style={{color: "#1c316f"}}/></InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control value={event.priceInEth} readOnly />
+                    <Form.Control style={{backgroundColor: "#bee3f8"}} value={event.priceInEth} readOnly />
                     <InputGroup.Append>
                       <InputGroup.Text>ETH</InputGroup.Text>
                     </InputGroup.Append>
@@ -202,9 +204,10 @@ class BuyTicketForm extends Component {
                 <Form.Group>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text><FaUsers /></InputGroup.Text>
+                      <InputGroup.Text><FaUsers style={{color: "#1c316f"}}/></InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control
+                    style={{backgroundColor: "#bee3f8"}}
                       value={
                         `${event.soldCounter} / ${event.quota}`
                       }
@@ -215,7 +218,7 @@ class BuyTicketForm extends Component {
                 {
                   !userIsTheOwner && (
                     <Button
-                      variant="primary"
+                      backgroundColor="rgb(55, 98, 221)"
                       type="submit"
                       block
                       disabled={(

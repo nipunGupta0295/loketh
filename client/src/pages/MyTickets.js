@@ -146,7 +146,7 @@ class MyTickets extends Component {
     }
 
     return (
-      <Fragment>
+      <Flex flexDir={"column"}>
         {
           loaded ? (
             tickets.length > 0 ? (
@@ -211,7 +211,7 @@ class MyTickets extends Component {
             />
           )
         }
-      </Fragment>
+      </Flex>
     );
   }
 }

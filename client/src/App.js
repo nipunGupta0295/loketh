@@ -59,12 +59,13 @@ class App extends Component {
       <Router>
         <Flex flexDir={'row'} gap="20px" width={'100vw'} height="100vh">
           <Navbar
+            flex="1"
             accounts={accounts}
             initialized={initialized}
             loketh={loketh}
             web3={web3}
           />
-          <Box pt={50}>
+          <Flex pt={50} justify="center" flex="4" >
             <Switch>
               <Route path="/my-events">
                 <MyEvents
@@ -91,7 +92,7 @@ class App extends Component {
                 />
               </Route>
             </Switch>
-          </Box>
+          </Flex>
         </Flex>
       </Router>
     );

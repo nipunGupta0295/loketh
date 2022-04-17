@@ -108,7 +108,7 @@ class Events extends Component {
           <Td>{event.shortName}</Td>
           <Td>{event.startTimeDisplay}</Td>
           <Td>{event.endTimeDisplay}</Td>
-          <Td>{event.price}</Td>
+          <Td>{event.priceInEth} ETH</Td>
           <Td>{event.shortOrganizer}</Td>
           <Td
             onClick={() => {
@@ -124,7 +124,7 @@ class Events extends Component {
     }
 
     return (
-      <Flex align="center" justify="center" flexDir="column" flex="1">
+      <Flex flexDir="column" flex="1" width={"100%"}>
         {
           loaded ? (
             events.length > 0 ? (

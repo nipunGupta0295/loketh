@@ -174,14 +174,14 @@ class MyEvents extends Component {
           >{event.shortName}</Td>
           <Td>{event.startTimeDisplay}</Td>
           <Td>{event.endTimeDisplay}</Td>
-          <Td>{event.price}</Td>
+          <Td>{event.priceInEth} ETH</Td>
           <Td> {`${event.soldCounter} / ${event.quota}`}</Td>
         </Tr>
       )
     }
 
     return (
-      <Fragment>
+      <Flex flexDir={"column"}>
         {loaded ? <Flex className="mt-1 position-relative">
           <div
           >
@@ -295,7 +295,7 @@ class MyEvents extends Component {
             </Fragment>
           )
         }
-      </Fragment>
+      </Flex>
     );
   }
 }
