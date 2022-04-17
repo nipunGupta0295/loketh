@@ -1,6 +1,5 @@
 import { Flex, Image, Text } from '@chakra-ui/react';
 import React, { Component } from 'react';
-import { Container, Nav, Navbar as RBNavbar, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { MdEventSeat, MdEvent } from 'react-icons/md';
 import { ImTicket } from 'react-icons/im';

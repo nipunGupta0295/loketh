@@ -12,7 +12,6 @@ import {
 } from '../components';
 import { arrayChunk, descPagination, handleError, toEvent } from '../utils';
 
-const CHUNK = 3;
 
 class MyEvents extends Component {
   _isMounted = false;

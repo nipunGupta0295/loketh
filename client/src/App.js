@@ -3,7 +3,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Footer, LokethAlert, Navbar } from './components';
+import { Navbar } from './components';
 import LokethContract from './contracts/Loketh.json';
 import getWeb3 from './getWeb3';
 import { Events, MyEvents, MyTickets } from './pages';

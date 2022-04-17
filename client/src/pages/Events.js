@@ -6,7 +6,6 @@ import { BuyTicketForm, Event, Pagination } from '../components';
 import { arrayChunk, descPagination, handleError, toEvent } from '../utils';
 import { Table, TableCaption, TableContainer, Tbody, Th, Thead, Tr, Td, Flex, Box } from '@chakra-ui/react';
 
-const CHUNK = 3;
 
 class Events extends Component {
   state = {
